@@ -12,6 +12,25 @@ class _MainScreenState extends State<MainScreen> {
   Future<String>? _city;
 
   @override
+  void initState() {
+    super.initState();
+    _city = _loadStart(_zipSearchController.text);
+  }
+
+  void _search() {
+    setState(() {
+      _city = getCityFromZip(_zipSearchController.text);
+    });
+  }
+
+  Future<String> _loadStart(String zip) async {
+    if (zip == '') {
+      return '';
+    }
+    return '';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -30,14 +49,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
                 OutlinedButton(
-                  onPressed: () {
-                    final zip = _zipSearchController.text.trim();
-                    if (zip.isNotEmpty) {
-                      setState(() {
-                        _city = getCityFromZip(zip);
-                      });
-                    }
-                  },
+                  onPressed: _search,
                   child: const Text("Suche"),
                 ),
                 FutureBuilder<String>(
