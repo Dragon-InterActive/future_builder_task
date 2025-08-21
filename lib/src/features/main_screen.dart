@@ -8,32 +8,86 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  late Future<String> _city;
+  final _zipSearchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _city = _loadStart(_zipSearchController.text);
+  }
+
+  void _search() {
+    setState(() {
+      _city = getCityFromZip(_zipSearchController.text);
+    });
+  }
+
+  Future<String> _loadStart(String zip) async {
+    if (zip == '') {
+      return '';
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Column(
-            spacing: 32,
-            children: [
-              TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Postleitzahl",
+      body: SafeArea(
+        //SafeArea damit das eingabefled auch nutzbar ist....
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Column(
+              spacing: 32,
+              children: [
+                TextFormField(
+                  controller: _zipSearchController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Postleitzahl",
+                  ),
                 ),
-              ),
-              OutlinedButton(
-                onPressed: () {
-                  // TODO: implementiere Suche
-                },
-                child: const Text("Suche"),
-              ),
-              Text(
-                "Ergebnis: Noch keine PLZ gesucht",
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-            ],
+                OutlinedButton(
+                  onPressed: _search,
+                  child: const Text("Suche"),
+                ),
+                FutureBuilder<String>(
+                  future: _city,
+                  builder: (coontext, snapshot) {
+                    //Laden
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return Column(
+                        children: [
+                          Text(
+                            'Suche Daten...',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                        ],
+                      );
+                    }
+                    //Fehler beim laden
+                    if (snapshot.hasError) {
+                      return Text(
+                        'Fehler bei der Ausführung...',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      );
+                    }
+                    //Daten erfolgreich geladen
+                    if (snapshot.hasData && snapshot.data != '') {
+                      return Text(
+                        '${snapshot.data}',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      );
+                    }
+                    return Text(
+                      'Ergebnis: Noch keine PLZ gesucht',
+                      style: Theme.of(context).textTheme.labelLarge,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -42,7 +96,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    // TODO: dispose controllers
+    _zipSearchController.dispose();
     super.dispose();
   }
 
