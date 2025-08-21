@@ -9,25 +9,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _zipSearchController = TextEditingController();
-  Future<String>? _city;
-
-  @override
-  void initState() {
-    super.initState();
-    _city = _loadStart(_zipSearchController.text);
-  }
+  Future<String>? _city = Future.value('');
 
   void _search() {
     setState(() {
       _city = getCityFromZip(_zipSearchController.text);
     });
-  }
-
-  Future<String> _loadStart(String zip) async {
-    if (zip == '') {
-      return '';
-    }
-    return '';
   }
 
   @override
