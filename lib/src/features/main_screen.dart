@@ -59,6 +59,7 @@ class _MainScreenState extends State<MainScreen> {
                     if (snapshot.connectionState != ConnectionState.done) {
                       return Column(
                         children: [
+                          CircularProgressIndicator(),
                           Text(
                             'Suche Daten...',
                             style: Theme.of(context).textTheme.labelLarge,
